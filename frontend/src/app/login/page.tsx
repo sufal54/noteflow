@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { saveToken } from "@/lib/auth";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,6 +12,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const baseUrl =
     process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
+  const router = useRouter();
 
   async function handleLogin() {
     try {
@@ -20,17 +24,24 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+      const data = await res.json();
       if (!res.ok) {
-        alert("❌ Login failed");
+        const message = data.message
+          ? Array.isArray(data.message)
+            ? data.message[0]
+            : data.message
+          : "❌ Login failed";
+        toast.error(message);
         return;
       }
-      const data = await res.json();
 
       saveToken(data.access_token);
-      window.location.href = "/notes";
+      toast.success("Login successfully!");
+
+      router.push("/notes");
     } catch (error) {
       console.error(error);
-      alert("❌ Login failed");
+      toast.error("❌ Login failed");
     } finally {
       setLoading(false);
     }

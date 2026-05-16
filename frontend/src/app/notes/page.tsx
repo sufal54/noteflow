@@ -3,6 +3,7 @@
 import { getToken, logout } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 type Note = {
   _id: string;
@@ -53,6 +54,8 @@ export default function Notes() {
 
   function handleLogout() {
     logout();
+    toast.success("Logout successfully!");
+
     router.push("/login");
   }
 
@@ -384,13 +387,14 @@ export default function Notes() {
                       owner {n.owner?.email}
                     </p>
                   </div>
-
-                  <button
-                    onClick={() => deleteNote(n._id)}
-                    className="opacity-70 group-hover:opacity-100 bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white px-3 py-1 rounded-lg transition"
-                  >
-                    Delete
-                  </button>
+                  {user?._id === n.owner._id && (
+                    <button
+                      onClick={() => deleteNote(n._id)}
+                      className="opacity-70 group-hover:opacity-100 bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white px-3 py-1 rounded-lg transition"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
 
                 {/* Content */}

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -19,15 +20,21 @@ export default function Register() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
+      const data = await res.json();
       if (!res.ok) {
-        throw new Error("Registration failed");
+        const message = data.message
+          ? Array.isArray(data.message)
+            ? data.message[0]
+            : data.message
+          : "Registration failed";
+        toast.error(message);
+        return;
       }
 
-      alert("🎉 Registered successfully!");
+      toast.success("Registered successfully!");
     } catch (error) {
       console.error(error);
-      alert("❌ Something went wrong");
+      toast.error("❌ Something went wrong");
     } finally {
       setLoading(false);
     }
