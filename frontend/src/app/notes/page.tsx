@@ -1,6 +1,6 @@
 "use client";
 
-import { getToken } from "@/lib/auth";
+import { getToken, logout } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -46,11 +46,15 @@ export default function Notes() {
   useEffect(() => {
     const token = getToken();
 
-    // If no token → redirect to register
     if (!token) {
       router.push("/register");
     }
   }, [router]);
+
+  function handleLogout() {
+    logout();
+    router.push("/login");
+  }
 
   async function deleteShareNotes(targetUserId: string) {
     const token = getToken();
@@ -194,13 +198,23 @@ export default function Notes() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="mb-10 text-center">
-          <h1 className="text-5xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            My Notes
-          </h1>
-          <p className="text-slate-400 mt-3">
-            Create and manage your notes beautifully ✨
-          </p>
+        <div className="mb-10 flex items-center justify-between">
+          <div>
+            <h1 className="text-5xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              My Notes
+            </h1>
+            <p className="text-slate-400 mt-3">
+              Create and manage your notes beautifully ✨
+            </p>
+          </div>
+
+          {/* Logout button */}
+          <button
+            onClick={handleLogout}
+            className="px-5 py-2 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition font-semibold"
+          >
+            Logout
+          </button>
         </div>
 
         {/* Create Note Card */}
