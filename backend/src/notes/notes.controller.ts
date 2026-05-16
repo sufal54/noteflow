@@ -11,6 +11,13 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { NotesService } from './notes.service';
+import {
+  CreateNoteDto,
+  NoteIdParamDto,
+  RemoveSharedUserParamsDto,
+  ShareNoteDto,
+  UpdateNoteDto,
+} from './dto/notes.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('notes')
@@ -23,36 +30,40 @@ export class NotesController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id, @Req() req) {
-    return this.notes.getOne(id, req.user.userId);
+  getOne(@Param() param, @Req() req) {
+    return this.notes.getOne(param.id, req.user.userId);
   }
 
   @Post()
-  create(@Body() body, @Req() req) {
+  create(@Body() body: CreateNoteDto, @Req() req) {
     return this.notes.create(body, req.user.userId);
   }
 
   @Put(':id')
-  update(@Param('id') id, @Body() body, @Req() req) {
-    return this.notes.update(id, body, req.user.userId);
+  update(@Param() param, @Body() body: UpdateNoteDto, @Req() req) {
+    return this.notes.update(param.id, body, req.user.userId);
   }
 
   @Delete(':id')
-  delete(@Param('id') id, @Req() req) {
-    return this.notes.delete(id, req.user.userId);
+  delete(@Param() param, @Req() req) {
+    return this.notes.delete(param.id, req.user.userId);
   }
 
   @Post(':id/share')
-  share(@Param('id') id, @Body() body, @Req() req) {
-    return this.notes.share(id, body.share_with_email, req.user.userId);
+  share(
+    @Param() param: NoteIdParamDto,
+    @Body() body: ShareNoteDto,
+    @Req() req,
+  ) {
+    return this.notes.share(param.id, body.share_with_email, req.user.userId);
   }
 
   @Delete(':id/share/:userId')
-  removeSharedUser(
-    @Param('id') id: string,
-    @Param('userId') userId: string,
-    @Req() req,
-  ) {
-    return this.notes.removeSharedUser(id, userId, req.user.userId);
+  removeSharedUser(@Param() params: RemoveSharedUserParamsDto, @Req() req) {
+    return this.notes.removeSharedUser(
+      params.id,
+      params.userId,
+      req.user.userId,
+    );
   }
 }
