@@ -14,7 +14,7 @@ export default function Register() {
       const baseUrl =
         process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
 
-      const res = await fetch(`${baseUrl}/register`, {
+      const res = await fetch(`${baseUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
